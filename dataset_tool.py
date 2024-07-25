@@ -441,16 +441,33 @@ def convert_dataset(
 
         image_bits = io.BytesIO()
         # Load the corresponding mask
+        dataset_type = 'je'
         if source_mask is not None:
-            img_idx, img_ext = os.path.splitext(image['img_name'])
-            mask = np.array(PIL.Image.open(os.path.join(source_mask, f'{img_idx}_mask{img_ext}')))
-            mask = transform_image(mask)
-            mask[mask >= 127.5] = 255
-            mask[mask < 127.5] = 0
+            if dataset_type == 'je':
+                img_idx, img_ext = os.path.splitext(image['img_name'])
+                img_ext = '.png'
+                mask = np.array(PIL.Image.open(os.path.join(source_mask, f'{img_idx}_mask{img_ext}')))
+                mask = transform_image(mask)
+                mask[mask >= 127.5] = 255
+                mask[mask < 127.5] = 0
+                mask = mask[:, :, 0]
 
-            img = np.concatenate((img, np.expand_dims(mask, axis = -1)), axis = 2)
-            assert img.shape == (height, width, 4)
-            np.save(image_bits, img)
+                if img.ndim == 2:
+                    img = np.expand_dims(img, axis=-1)
+
+                img = np.concatenate((img, np.expand_dims(mask, axis = -1)), axis = 2)
+                assert img.shape == (height, width, 2)
+                np.save(image_bits, img)
+            else:
+                img_idx, img_ext = os.path.splitext(image['img_name'])
+                mask = np.array(PIL.Image.open(os.path.join(source_mask, f'{img_idx}_mask{img_ext}')))
+                mask = transform_image(mask)
+                mask[mask >= 127.5] = 255
+                mask[mask < 127.5] = 0
+
+                img = np.concatenate((img, np.expand_dims(mask, axis=-1)), axis=2)
+                assert img.shape == (height, width, 4)
+                np.save(image_bits, img)
         else:
             # Save the image as an uncompressed PNG.
             img = PIL.Image.fromarray(img, { 1: 'L', 3: 'RGB' }[channels])
