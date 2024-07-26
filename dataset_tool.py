@@ -417,6 +417,9 @@ def convert_dataset(
         if img is None:
             continue
 
+        if img.ndim == 2:
+            img = np.repeat(img[:, :, None], 3, 2)
+
         # Error check to require uniform image attributes across
         # the whole dataset.
         channels = img.shape[2] if img.ndim == 3 else 1
@@ -452,11 +455,8 @@ def convert_dataset(
                 mask[mask < 127.5] = 0
                 mask = mask[:, :, 0]
 
-                if img.ndim == 2:
-                    img = np.expand_dims(img, axis=-1)
-
                 img = np.concatenate((img, np.expand_dims(mask, axis = -1)), axis = 2)
-                assert img.shape == (height, width, 2)
+                assert img.shape == (height, width, 4)
                 np.save(image_bits, img)
             else:
                 img_idx, img_ext = os.path.splitext(image['img_name'])
