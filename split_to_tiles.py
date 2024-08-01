@@ -23,8 +23,9 @@ def split_image_into_tiles(image_path, output_dir, tile_size=512):
             if x + tile_size > img_width:
                 x = img_width - tile_size
             tile = image[y:y + tile_size, x:x + tile_size]
-            tile_filename = os.path.join(output_dir, f"{name}_{tile_num}{ext}")
-            cv2.imwrite(tile_filename, tile)
+            if tile.max() > 0:
+                tile_filename = os.path.join(output_dir, f"{name}_{tile_num}{ext}")
+                cv2.imwrite(tile_filename, tile)
             tile_num += 1
 
 

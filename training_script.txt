@@ -1,0 +1,33 @@
+--data
+./data/je_defects_mask.zip
+--outdir
+runs/je_defect
+--resume
+pkls/je_401_good.pkl
+--gpus
+1
+--kimg
+400
+--snap
+10
+--transfer
+res_block_match_dis
+
+--data
+./data/je_good.zip
+--outdir
+runs/je_good
+--gpus
+1
+--kimg
+2000
+--resume
+runs/je_good/00025-je_good-auto1-kimg100/je_401_good.pkl
+
+
+
+--source /home/test/Documents/Adam/crop_images_adam/401/NG_Tiles
+--source-mask /home/test/Documents/Adam/crop_images_adam/401/Mask_tiles
+--dest ./data/je_defects_mask.zip
+--width 512
+--height 512
